@@ -11,9 +11,7 @@ export function meta({ }: Route.MetaArgs) {
 export default function Player() {
 	return (
 		<div className="">
-			<Link className="" to="/">
-				Go to Home
-			</Link>
+			This is the player page
 		</div>
 	);
 }

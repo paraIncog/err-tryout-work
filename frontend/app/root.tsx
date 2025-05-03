@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
@@ -9,6 +10,9 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { Container, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import HomeIcon from '@mui/icons-material/Home';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -33,9 +37,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
+        <Container>
+          <ToggleButtonGroup
+            orientation="horizontal"
+            exclusive>
+            <ToggleButton value={"home"}>
+              <Link to="/">
+                <HomeIcon fontSize="large" />
+              </Link>
+            </ToggleButton>
+            <ToggleButton value={"player"}>
+              <Link to="/player">
+                <PlayArrowIcon fontSize="large" />
+              </Link>
+            </ToggleButton>
+          </ToggleButtonGroup>
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </Container>
       </body>
     </html>
   );
