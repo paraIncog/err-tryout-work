@@ -1,5 +1,5 @@
+import { Pleier } from "~/components/Pleier";
 import type { Route } from "./+types/home";
-import { Link } from "react-router-dom";
 
 export function meta({ }: Route.MetaArgs) {
 	return [
@@ -9,9 +9,20 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 export default function Player() {
+	const episodes = [
+		{
+		  id: 123,
+		  title: 'Audio Title',
+		  description: 'Audio Description',
+		  date: '2025-05-03T13:30:00Z',
+		  imageUrl: 'https://s.err.ee/photo/crop/2017/10/11/412317hbd06t4.png',
+		  audioUrl: 'https://example.com/audio.mp3',
+		  duration: 245, // seconds
+		},
+	  ];
 	return (
 		<div className="">
-			This is the player page
+			<Pleier episodeList={episodes} />
 		</div>
 	);
 }
