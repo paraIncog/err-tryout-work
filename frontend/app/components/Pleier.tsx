@@ -76,7 +76,6 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
         <Grid size={8} direction={'column'}>
           <Typography variant='h4'>{episode.title}</Typography>
           <Typography variant='subtitle1'>{episode.description}</Typography>
-          <Typography variant='subtitle2' style={{ fontSize: '0.9em', color: '#666' }}>{episode.formatedDate}</Typography>
           <Grid>
           <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
             <button onClick={togglePlay} style={{ marginRight: 10 }}>
