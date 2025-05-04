@@ -40,16 +40,6 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const formatDate = (isoDate: string): string => {
-    const date = new Date(isoDate);
-    return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')}.${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date
-        .getMinutes()
-        .toString()
-        .padStart(2, '0')}`;
-  };
-
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -66,17 +56,17 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
   return (
     <div>
       <Grid container spacing={1} direction="row" alignItems="center" justifyContent="center" style={{ border: '1px solid #ccc', padding: 16, borderRadius: 8 }}>
-        <Grid>
+        <Grid size={4}>
           <img src={episode.imageUrl} alt="Thumbnail" style={{ maxWidth: '20rem' }} />
         </Grid>
-        <Grid>
+        <Grid size={8} direction={'column'}>
           <Typography variant='h4'>{episode.title}</Typography>
-          <Typography variant='h5'>{episode.description}</Typography>
+          <Typography variant='subtitle1'>{episode.description}</Typography>
           <p style={{ fontSize: '0.9em', color: '#666' }}>{episode.formatedDate}</p>
 
           <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
             <button onClick={togglePlay} style={{ marginRight: 10 }}>
-              {isPlaying ? '⏸️ Pause' : '▶️ Play'}
+              {isPlaying ? '⏸' : '▶'}
             </button>
             <span>{formatDuration(currentTime)}</span>
             <input

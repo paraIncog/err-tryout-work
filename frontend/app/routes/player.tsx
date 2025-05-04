@@ -20,15 +20,8 @@ export default function Player() {
             title: content.heading,
             description: content.lead,
             date: content.dateCreated,
-			formatedDate: new Date(content.dateCreated).toLocaleString("de-DE", {
-			  day: "2-digit",
-			  month: "2-digit",
-			  year: "numeric",
-			  hour: "2-digit",
-			  minute: "2-digit",
-			}),
             imageUrl: content.photos?.[0]?.photoUrlOriginal,
-            audioUrl: content.media?.[0]?.mediaUrl, // adjust based on actual API response
+            audioUrl: content.media?.[0]?.mediaUrl,
             duration: content.media?.[0]?.duration || 240,
           });
         }
