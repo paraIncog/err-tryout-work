@@ -8,7 +8,7 @@ type ContentProps = {
     photos: { photoUrlOriginal: string }[];
 };
 
-export const ContentCard: React.FC<ContentProps> = ({ id, heading, lead, photos }) => (
+export const ContentCard: React.FC<ContentProps> = ({ id, heading, photos }) => (
     <Link to={`/player/${id}`} style={{ textDecoration: 'none' }}>
         <Card style={{ height: "21rem", textDecoration: 'none' }}>
             <CardMedia component="img" src={photos?.[0]?.photoUrlOriginal} alt={heading} width="200" />
