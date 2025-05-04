@@ -32,9 +32,9 @@ export default function Home() {
 
   return (
     <div className="">
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+      <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         {items.map((item) => (
-          <Grid size={4} item xs={12} sm={6} md={4} key={item.id}>
+          <Grid size={4} xs={12} sm={6} md={4} key={item.id}>
             <Stack spacing={2}>
               <ContentCard {...item} />
             </Stack>
