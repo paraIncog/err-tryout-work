@@ -18,6 +18,8 @@ type PleierProps = {
 
 export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
 
+  if (!episodeList || episodeList.length === 0) return null;
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -65,6 +67,7 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
   const [episodeDuration, setEpisodeDuration] = useState<number>(episode.duration || 0);
 
   return (
+    
     <div>
 
       <Grid container spacing={1} direction="row" alignItems="center" justifyContent="center" style={{ border: '1px solid #ccc', padding: 16, borderRadius: 8 }}>
