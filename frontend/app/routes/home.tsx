@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Route } from "./+types/home";
 import { fetchContentRange } from "~/services/api";
 import { Grid, Stack } from "@mui/material";
+import { ContentCard } from "~/components/ContentCard";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -33,13 +34,9 @@ export default function Home() {
     <div className="">
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         {items.map((item) => (
-          <Grid size={4} key={item.id}>
+          <Grid size={4} item xs={12} sm={6} md={4} key={item.id}>
             <Stack spacing={2}>
-              <div className="content-card" key={item.id}>
-                <img src={item.photos?.[0]?.photoUrlOriginal} alt={item.heading} width="150" />
-                <h3>{item.heading}</h3>
-                <div dangerouslySetInnerHTML={{ __html: item.lead }} />
-              </div>
+              <ContentCard {...item} />
             </Stack>
           </Grid>
         ))}

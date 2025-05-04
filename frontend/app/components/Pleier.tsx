@@ -6,6 +6,7 @@ type Episode = {
   title: string;
   description: string;
   date: string; // ISO format, e.g. '2025-05-03T13:30:00Z'
+  formatedDate: string; // e.g. '03.05.2025 13:30'
   imageUrl: string;
   audioUrl: string;
   duration: number; // in seconds
@@ -64,14 +65,14 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
 
   return (
     <div>
-      <Grid container spacing={2} direction="row" alignItems="center" justifyContent="center" style={{ border: '1px solid #ccc', padding: 16, borderRadius: 8 }}>
+      <Grid container spacing={1} direction="row" alignItems="center" justifyContent="center" style={{ border: '1px solid #ccc', padding: 16, borderRadius: 8 }}>
         <Grid>
-          <img src={episode.imageUrl} alt="Thumbnail" style={{ border: '1px solid #ccc' }} />
+          <img src={episode.imageUrl} alt="Thumbnail" style={{ maxWidth: '20rem' }} />
         </Grid>
         <Grid>
-          <Typography variant='h3'>{episode.title}</Typography>
+          <Typography variant='h4'>{episode.title}</Typography>
           <Typography variant='h5'>{episode.description}</Typography>
-          <p style={{ fontSize: '0.9em', color: '#666' }}>{formatDate(episode.date)}</p>
+          <p style={{ fontSize: '0.9em', color: '#666' }}>{episode.formatedDate}</p>
 
           <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
             <button onClick={togglePlay} style={{ marginRight: 10 }}>
