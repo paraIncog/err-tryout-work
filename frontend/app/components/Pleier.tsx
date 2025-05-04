@@ -87,8 +87,6 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
           </div>
         </Grid>
       </Grid>
-
-      <audio ref={audioRef} src={episode.audioUrl} preload="metadata" />
     </div>
   );
 };

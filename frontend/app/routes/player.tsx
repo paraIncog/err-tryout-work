@@ -21,7 +21,6 @@ export default function Player() {
             description: content.lead,
             date: content.dateCreated,
             imageUrl: content.photos?.[0]?.photoUrlOriginal,
-            audioUrl: content.media?.[0]?.mediaUrl,
             duration: content.media?.[0]?.duration || 240,
           });
         }
