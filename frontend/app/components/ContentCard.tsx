@@ -1,4 +1,4 @@
-import { Card, CardMedia, Grid, Typography } from "@mui/material";
+import { Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
 import { Link } from "react-router";
 
 type ContentProps = {
@@ -10,9 +10,11 @@ type ContentProps = {
 
 export const ContentCard: React.FC<ContentProps> = ({ id, heading, lead, photos }) => (
     <Link to={`/player/${id}`} style={{ textDecoration: 'none' }}>
-        <Card style={{ height: "20rem", textDecoration: 'none' }}>
+        <Card style={{ height: "21rem", textDecoration: 'none' }}>
             <CardMedia component="img" src={photos?.[0]?.photoUrlOriginal} alt={heading} width="200" />
-            <Typography variant="h5" align="center">{heading}</Typography>
+            <CardContent style={{ padding: "1rem" }}>
+                <Typography variant="h5" align="center">{heading}</Typography>
+            </CardContent>
         </Card>
     </Link>
 );
