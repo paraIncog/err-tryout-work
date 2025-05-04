@@ -2,7 +2,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Pleier } from "~/components/Pleier";
-import type { Route } from "./+types/home";
 
 export default function Player() {
   const { id } = useParams();
@@ -15,13 +14,15 @@ export default function Player() {
       .then(data => {
         if (data.length > 0) {
           const content = data[0];
+          const media = content.medias?.[0];
           setEpisode({
             id: content.id,
             title: content.heading,
             description: content.lead,
             date: content.dateCreated,
             imageUrl: content.photos?.[0]?.photoUrlOriginal,
-            duration: content.media?.[0]?.duration || 240,
+            audioUrl: media?.podcastUrl,
+            duration: media?.duration || 240,
           });
         }
       });

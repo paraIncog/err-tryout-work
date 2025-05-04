@@ -1,5 +1,4 @@
 import { Grid, Typography } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
 
 type Episode = {
   id: number;
@@ -8,6 +7,7 @@ type Episode = {
   date: string; // ISO format, e.g. '2025-05-03T13:30:00Z'
   formatedDate: string; // e.g. '03.05.2025 13:30'
   imageUrl: string;
+  audioUrl: string;
   duration: number; // in seconds
 };
 
@@ -30,6 +30,11 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
           <Typography variant='h4'>{episode.title}</Typography>
           <Typography variant='subtitle1'>{episode.description}</Typography>
           <Typography variant='subtitle2' style={{ fontSize: '0.9em', color: '#666' }}>{episode.formatedDate}</Typography>
+          <audio controls style={{ width: '100%', marginTop: 16 }}>
+            <source src={episode.audioUrl} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
+
         </Grid>
       </Grid>
     </div>

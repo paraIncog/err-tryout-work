@@ -10,9 +10,17 @@ public class ContentItem {
     private String heading;
     private String lead;
     private List<Photo> photos;
+    private List<Media> medias;
 
     @Data
     public static class Photo {
         private String photoUrlOriginal;
+    }
+
+    @Data
+    public static class Media {
+        private String podcastUrl;
+        private String file;
+        private int duration;
     }
 }
