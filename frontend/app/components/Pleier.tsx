@@ -56,8 +56,8 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
   return (
     <div>
       <Grid container spacing={1} direction="row" alignItems="center" justifyContent="center" style={{ border: '1px solid #ccc', padding: 16, borderRadius: 8 }}>
-        <Grid size={4}>
-          <img src={episode.imageUrl} alt="Thumbnail" style={{ maxWidth: '20rem' }} />
+        <Grid align="center" size={4}>
+          <img src={episode.imageUrl} alt="Thumbnail" style={{ maxWidth: '20rem', maxHeight: '20rem' }} />
         </Grid>
         <Grid size={8} direction={'column'}>
           <Typography variant='h4'>{episode.title}</Typography>
