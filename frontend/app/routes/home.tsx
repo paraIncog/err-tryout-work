@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Route } from "./+types/home";
 import { fetchContentRange } from "~/services/api";
-import { Grid, Stack } from "@mui/material";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import { ContentCard } from "~/components/ContentCard";
 
 export function meta({ }: Route.MetaArgs) {
@@ -30,17 +30,45 @@ export default function Home() {
     return <div>Loading...</div>;
   }
 
+  // Grouping logic - adjust as needed
+  const categorize = (items: any[]) => {
+    const categories: Record<string, any[]> = {
+      "Päevakajaline": [],
+      "Meelelahutus": [],
+      "Muu": []
+    };
+
+    for (const item of items) {
+      if (item.heading?.includes("päev") || item.heading?.includes("aktuaalne")) {
+        categories["Päevakajaline"].push(item);
+      } else if (item.heading?.includes("meelelahutus") || item.heading?.includes("huumor")) {
+        categories["Meelelahutus"].push(item);
+      } else {
+        categories["Muu"].push(item);
+      }
+    }
+
+    return categories;
+  };
+
+  const categorizedItems = categorize(items);
+
   return (
-    <div className="">
-      <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2 }}>
-        {items.map((item) => (
-          <Grid size={4} key={item.id}>
-            <Stack spacing={2}>
-              <ContentCard {...item} />
-            </Stack>
-          </Grid>
-        ))}
-      </Grid>
+    <div>
+      {Object.entries(categorizedItems).map(([category, contents]) => (
+        <Box key={category} mb={6}>
+          <Typography variant="h5" fontWeight="bold" gutterBottom>
+            {category}
+          </Typography>
+          <Box display="flex" overflow="auto" gap={2} pb={1}>
+            {contents.map((item) => (
+              <Box key={item.id} flex="0 0 auto" width={240}>
+                <ContentCard {...item} />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      ))}
     </div>
   );
 }
