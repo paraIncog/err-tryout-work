@@ -18,13 +18,28 @@ public class ContentService {
         for (int i = from; i <= to; i++) {
             try {
                 String url = "https://services.err.ee/api/v2/radioAppContent/getContentPageData?contentId=" + i;
-                ResponseEntity<ContentResponseWrapper> response = restTemplate.getForEntity(url, ContentResponseWrapper.class);
+                ResponseEntity<ContentResponseWrapper> response = restTemplate.getForEntity(url,
+                        ContentResponseWrapper.class);
                 ContentItem content = response.getBody().getData().getMainContent();
+
                 if (content != null) {
-                    contentList.add(content);
+                    if ((content.getMedias() == null || content.getMedias().isEmpty()) &&
+                            content.getClips() != null && !content.getClips().isEmpty()) {
+
+                        List<ContentItem.Media> fallbackMedias = content.getClips().get(0).getMedias();
+                        if (fallbackMedias != null && !fallbackMedias.isEmpty()) {
+                            content.setMedias(fallbackMedias);
+                        }
+                    }
+
+                    if (content.getMedias() != null && !content.getMedias().isEmpty()) {
+                        contentList.add(content);
+                    }
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return contentList;
     }
+
 }

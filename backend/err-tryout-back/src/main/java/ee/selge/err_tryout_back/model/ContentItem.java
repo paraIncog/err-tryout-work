@@ -11,6 +11,7 @@ public class ContentItem {
     private String lead;
     private List<Photo> photos;
     private List<Media> medias;
+    private List<ContentItem> clips;
 
     @Data
     public static class Photo {
