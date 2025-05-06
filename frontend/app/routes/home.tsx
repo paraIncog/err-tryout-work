@@ -52,23 +52,32 @@ export default function Home() {
   };
 
   const categorizedItems = categorize(items);
+  const hasContent = Object.values(categorizedItems).some(categoryItems => categoryItems.length > 0);
 
   return (
     <div>
-      {Object.entries(categorizedItems).map(([category, contents]) => (
-        <Box key={category} mb={6}>
-          <Typography variant="h5" fontWeight="bold" gutterBottom>
-            {category}
-          </Typography>
-          <Box display="flex" overflow="auto" gap={2} pb={1}>
-            {contents.map((item) => (
-              <Box key={item.id} flex="0 0 auto" width={240}>
-                <ContentCard {...item} />
+      {!hasContent ? (
+        <Typography variant="h6" align="center" mt={5}>
+          Currently not available, sorry for the inconvenience.
+        </Typography>
+      ) : (
+        Object.entries(categorizedItems).map(([category, contents]) => (
+          contents.length > 0 && (
+            <Box key={category} mb={6}>
+              <Typography variant="h5" fontWeight="bold" gutterBottom>
+                {category}
+              </Typography>
+              <Box display="flex" overflow="auto" gap={2} pb={1}>
+                {contents.map((item) => (
+                  <Box key={item.id} flex="0 0 auto" width={240}>
+                    <ContentCard {...item} />
+                  </Box>
+                ))}
               </Box>
-            ))}
-          </Box>
-        </Box>
-      ))}
+            </Box>
+          )
+        ))
+      )}
     </div>
   );
 }
