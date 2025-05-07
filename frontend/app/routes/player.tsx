@@ -19,7 +19,6 @@ export default function Player() {
             id: content.id,
             title: content.heading,
             description: content.lead,
-            date: content.dateCreated,
             imageUrl: content.photos?.[0]?.photoUrlOriginal,
             audioUrl: media?.podcastUrl,
             duration: media?.duration || 240,

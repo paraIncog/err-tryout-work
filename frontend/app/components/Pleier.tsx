@@ -5,8 +5,6 @@ type Episode = {
   id: number;
   title: string;
   description: string;
-  date: string; // ISO format, e.g. '2025-05-03T13:30:00Z'
-  formatedDate: string; // e.g. '03.05.2025 13:30'
   imageUrl: string;
   audioUrl: string;
   duration: number; // in seconds
