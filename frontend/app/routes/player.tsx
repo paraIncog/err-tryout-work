@@ -22,6 +22,7 @@ export default function Player() {
             imageUrl: content.photos?.[0]?.photoUrlOriginal,
             audioUrl: media?.podcastUrl,
             duration: media?.duration || 240,
+            createdTime: content.formatedTimes?.created || '',
           });
         }
       });

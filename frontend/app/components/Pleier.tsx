@@ -8,6 +8,7 @@ type Episode = {
   imageUrl: string;
   audioUrl: string;
   duration: number; // in seconds
+  createdTime?: string;
 };
 
 type PleierProps = {
@@ -65,7 +66,7 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
   const [episodeDuration, setEpisodeDuration] = useState<number>(episode.duration || 0);
 
   return (
-    
+
     <div>
 
       <Grid container spacing={1} direction="row" alignItems="center" justifyContent="center" style={{ border: '1px solid #ccc', padding: 16, borderRadius: 8 }}>
@@ -75,34 +76,38 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
         </Grid>
 
         <Grid size={8} direction={'column'}>
+          <Typography variant='body2'>
+            Avaldatud: {episode.createdTime}
+          </Typography>
           <Typography variant='h4'>{episode.title}</Typography>
           <Typography variant='subtitle1'>{episode.description}</Typography>
+
           <Grid>
-          <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
-            <button onClick={togglePlay} style={{ marginRight: 10 }}>
-              {isPlaying ? '⏸' : '▶'}
-            </button>
-            <span>{formatDuration(currentTime)}</span>
-            <input
-              type="range"
-              min={0}
-              max={episodeDuration}
-              value={currentTime}
-              onChange={(e) => {
-                const time = Number(e.target.value);
-                if (audioRef.current) {
-                  audioRef.current.currentTime = time;
-                }
-                setCurrentTime(time);
-              }}
-              style={{ flexGrow: 1, margin: '0 8px' }}
-            />
-            <span>{formatDuration(episodeDuration)}</span>
-          </div>
+            <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
+              <button onClick={togglePlay} style={{ marginRight: 10 }}>
+                {isPlaying ? '⏸' : '▶'}
+              </button>
+              <span>{formatDuration(currentTime)}</span>
+              <input
+                type="range"
+                min={0}
+                max={episodeDuration}
+                value={currentTime}
+                onChange={(e) => {
+                  const time = Number(e.target.value);
+                  if (audioRef.current) {
+                    audioRef.current.currentTime = time;
+                  }
+                  setCurrentTime(time);
+                }}
+                style={{ flexGrow: 1, margin: '0 8px' }}
+              />
+              <span>{formatDuration(episodeDuration)}</span>
+            </div>
           </Grid>
 
         </Grid>
-        
+
       </Grid>
       <audio ref={audioRef} src={episode.audioUrl} preload="metadata" />
     </div>
