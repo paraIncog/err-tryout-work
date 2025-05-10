@@ -15,7 +15,7 @@ export default function PlayerScreen({ route }) {
   const numericId = typeof id === 'string' ? parseInt(id) : id;
 
   useEffect(() => {
-    fetch(`http://192.168.1.144:8080/api/content/range?from=${id}&to=${id}`)
+    fetch(`http://192.168.1.231:8080/api/content/range?from=${id}&to=${id}`)
       .then(res => res.json())
       .then(data => {
         const content = data[0];
