@@ -1,21 +1,24 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, Button } from 'react-native';
 import Slider from '@react-native-community/slider';
-import { Audio } from 'expo-audio';
 import { useLocalSearchParams } from 'expo-router';
+import { Audio } from 'expo-audio';
 
-export default function PlayerScreen({ route }) {
+export default function PlayerScreen() {
   const { id } = useLocalSearchParams();
+  const numericId = typeof id === 'string' ? parseInt(id) : id;
+
   const [episode, setEpisode] = useState<any>(null);
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(1);
+  const [isSeeking, setIsSeeking] = useState(false);
 
-  const numericId = typeof id === 'string' ? parseInt(id) : id;
+  const playerRef = useRef<Audio.Player | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    fetch(`http://192.168.1.231:8080/api/content/range?from=${id}&to=${id}`)
+    fetch(`http://192.168.1.231:8080/api/content/range?from=${numericId}&to=${numericId}`)
       .then(res => res.json())
       .then(data => {
         const content = data[0];
@@ -26,37 +29,65 @@ export default function PlayerScreen({ route }) {
           audioUrl: media?.podcastUrl,
         });
       });
-  }, [id]);
+  }, [numericId]);
 
   useEffect(() => {
-    return sound ? () => sound.unloadAsync() : undefined;
-  }, [sound]);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (playerRef.current) playerRef.current.unloadAsync();
+    };
+  }, []);
+
+  const loadAndPlay = async () => {
+    if (!episode || playerRef.current) return;
+
+    const player = new Audio.Player();
+    await player.load(episode.audioUrl);
+    await player.play();
+
+    setIsPlaying(true);
+    playerRef.current = player;
+
+    // Polling position
+    intervalRef.current = setInterval(async () => {
+      const status = await player.getStatus();
+      if (!isSeeking) {
+        setPosition(status.positionMillis);
+      }
+      setDuration(status.durationMillis);
+    }, 500);
+  };
 
   const togglePlay = async () => {
-    if (!sound) {
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        { uri: episode.audioUrl },
-        { shouldPlay: true },
-        onPlaybackStatusUpdate
-      );
-      setSound(newSound);
-      setIsPlaying(true);
+    const player = playerRef.current;
+
+    if (!player) {
+      await loadAndPlay();
+      return;
+    }
+
+    if (isPlaying) {
+      await player.pause();
+      setIsPlaying(false);
     } else {
-      if (isPlaying) {
-        await sound.pauseAsync();
-        setIsPlaying(false);
-      } else {
-        await sound.playAsync();
-        setIsPlaying(true);
-      }
+      await player.play();
+      setIsPlaying(true);
     }
   };
 
-  const onPlaybackStatusUpdate = (status: any) => {
-    if (status.isLoaded) {
-      setPosition(status.positionMillis);
-      setDuration(status.durationMillis);
+  const handleSeek = async (value: number) => {
+    const player = playerRef.current;
+    if (player) {
+      await player.setPosition(value);
+      setPosition(value);
     }
+  };
+
+  const formatTime = (ms: number): string => {
+    const total = Math.floor(ms / 1000);
+    const min = Math.floor(total / 60).toString().padStart(2, '0');
+    const sec = (total % 60).toString().padStart(2, '0');
+    return `${min}:${sec}`;
   };
 
   if (!episode) return <Text>Loading...</Text>;
@@ -65,15 +96,28 @@ export default function PlayerScreen({ route }) {
     <View style={{ padding: 20 }}>
       <Image source={{ uri: episode.imageUrl }} style={{ width: '100%', height: 200 }} />
       <Text style={{ fontSize: 24, marginVertical: 10 }}>{episode.title}</Text>
-      <Button title={isPlaying ? "Pause" : "Play"} onPress={togglePlay} />
-      <Slider
-        value={position}
-        minimumValue={0}
-        maximumValue={duration}
-        onValueChange={val => {
-          if (sound) sound.setPositionAsync(val);
-        }}
-      />
+
+      <Button title={isPlaying ? 'Pause' : 'Play'} onPress={togglePlay} />
+
+      <View style={{ marginTop: 20 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text>{formatTime(position)}</Text>
+          <Text>{formatTime(duration)}</Text>
+        </View>
+        <Slider
+          minimumValue={0}
+          maximumValue={duration}
+          value={position}
+          onValueChange={val => {
+            setIsSeeking(true);
+            setPosition(val);
+          }}
+          onSlidingComplete={(val) => {
+            setIsSeeking(false);
+            handleSeek(val);
+          }}
+        />
+      </View>
     </View>
   );
 }
