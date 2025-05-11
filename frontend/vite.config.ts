@@ -4,5 +4,6 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
+  base: '/err-tryout-work/',
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
 });
