@@ -63,13 +63,23 @@ export default function Home() {
       ) : (
         Object.entries(categorizedItems).map(([category, contents]) => (
           contents.length > 0 && (
-            <Box key={category} mb={6}>
+            <Box key={category} mb={6} sx={{ xs: 1, sm: 2 }}>
               <Typography variant="h5" fontWeight="bold" gutterBottom>
                 {category}
               </Typography>
-              <Box display="flex" overflow="auto" gap={2} pb={1}>
+              <Box sx={{
+                display: 'flex',
+                overflowX: 'auto',
+                gap: 2,
+                pb: 1,
+                scrollSnapType: 'x mandatory',
+              }} display="flex" overflow="auto" gap={2} pb={1}>
                 {contents.map((item) => (
-                  <Box key={item.id} flex="0 0 auto" width={240}>
+                  <Box sx={{
+                    flex: '0 0 auto',
+                    width: { xs: 200, sm: 240 },
+                    scrollSnapAlign: 'start',
+                  }} key={item.id} flex="0 0 auto" width={240}>
                     <ContentCard {...item} />
                   </Box>
                 ))}
