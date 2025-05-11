@@ -7,7 +7,7 @@ type Episode = {
   description: string;
   imageUrl: string;
   audioUrl: string;
-  duration: number; // in seconds
+  duration: number;
   createdTime?: string;
 };
 
@@ -18,12 +18,13 @@ type PleierProps = {
 export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
   if (!episodeList || episodeList.length === 0) return null;
 
+  const episode = episodeList[0];
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [episodeDuration, setEpisodeDuration] = useState<number>(episodeList[0].duration || 0);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [episodeDuration, setEpisodeDuration] = useState<number>(episode.duration || 0);
 
-  const episode = episodeList[0];
+  const STORAGE_KEY = `episode-progress-${episode.id}`;
 
   const togglePlay = () => {
     if (!audioRef.current) return;
@@ -45,7 +46,19 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const updateTime = () => setCurrentTime(audio.currentTime);
+    // Take saved position
+    const savedTime = localStorage.getItem(STORAGE_KEY);
+    if (savedTime) {
+      audio.currentTime = parseFloat(savedTime);
+      setCurrentTime(audio.currentTime);
+    }
+
+    const updateTime = () => {
+      const time = audio.currentTime;
+      setCurrentTime(time);
+      localStorage.setItem(STORAGE_KEY, time.toString());
+    };
+
     const updateDuration = () => {
       if (audio.duration && !isNaN(audio.duration)) {
         setEpisodeDuration(audio.duration);
@@ -56,15 +69,12 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
     audio.addEventListener('loadedmetadata', updateDuration);
     audio.addEventListener('ended', () => setIsPlaying(false));
 
-    // Media Session API integration
     if ('mediaSession' in navigator && episode) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: episode.title,
         artist: 'ERR',
         album: 'ERR Raadio',
-        artwork: [
-          { src: episode.imageUrl, sizes: '512x512', type: 'image/png' },
-        ],
+        artwork: [{ src: episode.imageUrl, sizes: '512x512', type: 'image/png' }],
       });
 
       navigator.mediaSession.setActionHandler('play', () => {
@@ -127,6 +137,7 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
                   audioRef.current.currentTime = time;
                 }
                 setCurrentTime(time);
+                localStorage.setItem(STORAGE_KEY, time.toString());
               }}
               style={{ flexGrow: 1, margin: '0 8px' }}
             />
