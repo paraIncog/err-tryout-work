@@ -3,7 +3,6 @@
     "name": "err-tryout-mobileapp1",
     "slug": "err-tryout-mobileapp1",
     "version": "1.0.0",
-    "API_URL": "process.env.API_URL",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "errtryoutmobileapp1",

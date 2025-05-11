@@ -5,21 +5,22 @@ import { useLocalSearchParams } from 'expo-router';
 import { Audio } from 'expo-audio';
 
 export default function PlayerScreen() {
-  const { id } = useLocalSearchParams();
-  const numericId = typeof id === 'string' ? parseInt(id) : id;
+    const API_URL = process.env.EXPO_PUBLIC_API_URL;
+    const { id } = useLocalSearchParams();
+    const numericId = typeof id === 'string' ? parseInt(id) : id;
 
-  const [episode, setEpisode] = useState<any>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [position, setPosition] = useState(0);
-  const [duration, setDuration] = useState(1);
-  const [isSeeking, setIsSeeking] = useState(false);
+      const [episode, setEpisode] = useState<any>(null);
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [position, setPosition] = useState(0);
+      const [duration, setDuration] = useState(1);
+      const [isSeeking, setIsSeeking] = useState(false);
 
-  const playerRef = useRef<Audio.Player | null>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+      const playerRef = useRef<Audio.Player | null>(null);
+      const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    fetch(`http://${API_URL}/api/content/range?from=${numericId}&to=${numericId}`)
-      .then(res => res.json())
+      useEffect(() => {
+        fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/content/range?from=${numericId}&to=${numericId}`)
+        .then(res => res.json())
       .then(data => {
         const content = data[0];
         const media = content.medias?.[0];

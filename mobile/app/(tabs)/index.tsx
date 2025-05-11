@@ -4,8 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 const router = useRouter();
 
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
 const fetchContentRange = async () => {
-  const res = await fetch('http://${API_URL}/api/content/range?from=1609669300&to=1609669316');
+  const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/content/range?from=1609669300&to=1609669316`);
   return res.json();
 };
 
