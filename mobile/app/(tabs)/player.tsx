@@ -18,7 +18,7 @@ export default function PlayerScreen() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    fetch(`http://192.168.1.231:8080/api/content/range?from=${numericId}&to=${numericId}`)
+    fetch(`http://${API_URL}/api/content/range?from=${numericId}&to=${numericId}`)
       .then(res => res.json())
       .then(data => {
         const content = data[0];

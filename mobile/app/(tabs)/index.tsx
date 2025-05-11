@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 const router = useRouter();
 
 const fetchContentRange = async () => {
-  const res = await fetch('http://192.168.1.231:8080/api/content/range?from=1609669300&to=1609669316');
+  const res = await fetch('http://${API_URL}/api/content/range?from=1609669300&to=1609669316');
   return res.json();
 };
 

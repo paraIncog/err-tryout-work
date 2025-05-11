@@ -1,11 +1,12 @@
 {
   "expo": {
-    "name": "mytryout-expoapp",
-    "slug": "mytryout-expoapp",
+    "name": "err-tryout-mobileapp1",
+    "slug": "err-tryout-mobileapp1",
     "version": "1.0.0",
+    "API_URL": "process.env.API_URL",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mytryoutexpoapp",
+    "scheme": "errtryoutmobileapp1",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -33,8 +34,7 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ],
-      "expo-audio"
+      ]
     ],
     "experiments": {
       "typedRoutes": true
