@@ -2,84 +2,92 @@ import { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, Button } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useLocalSearchParams } from 'expo-router';
-import { Audio } from 'expo-audio';
+import { Audio } from 'expo-av';
 
 export default function PlayerScreen() {
-    const API_URL = process.env.EXPO_PUBLIC_API_URL;
-    const { id } = useLocalSearchParams();
-    const numericId = typeof id === 'string' ? parseInt(id) : id;
+  const { id } = useLocalSearchParams();
+  const numericId = typeof id === 'string' ? parseInt(id) : id;
 
-      const [episode, setEpisode] = useState<any>(null);
-      const [isPlaying, setIsPlaying] = useState(false);
-      const [position, setPosition] = useState(0);
-      const [duration, setDuration] = useState(1);
-      const [isSeeking, setIsSeeking] = useState(false);
+  const [episode, setEpisode] = useState<any>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [position, setPosition] = useState(0);
+  const [duration, setDuration] = useState(1);
+  const [isSeeking, setIsSeeking] = useState(false);
 
-      const playerRef = useRef<Audio.Player | null>(null);
-      const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const soundRef = useRef<Audio.Sound | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-      useEffect(() => {
-        fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/content/range?from=${numericId}&to=${numericId}`)
-        .then(res => res.json())
-      .then(data => {
-        const content = data[0];
-        const media = content.medias?.[0];
+  useEffect(() => {
+    const fetchEpisode = async () => {
+      try {
+        const res = await fetch(`https://services.err.ee/api/v2/radioAppContent/getContentPageData?contentId=${numericId}`);
+        const json = await res.json();
+        const content = json?.data?.mainContent;
+        const media = content?.medias?.[0] || content?.clips?.[0]?.medias?.[0];
+        if (!media) return;
+
         setEpisode({
           title: content.heading,
           imageUrl: content.photos?.[0]?.photoUrlOriginal,
-          audioUrl: media?.podcastUrl,
+          audioUrl: media.podcastUrl,
         });
-      });
+      } catch (error) {
+        console.error("Failed to fetch episode:", error);
+      }
+    };
+
+    fetchEpisode();
   }, [numericId]);
 
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
-      if (playerRef.current) playerRef.current.unloadAsync();
+      if (soundRef.current) soundRef.current.unloadAsync();
     };
   }, []);
 
   const loadAndPlay = async () => {
-    if (!episode || playerRef.current) return;
+    if (!episode || soundRef.current) return;
 
-    const player = new Audio.Player();
-    await player.load(episode.audioUrl);
-    await player.play();
+    const { sound } = await Audio.Sound.createAsync(
+      { uri: episode.audioUrl },
+      { shouldPlay: true },
+      onPlaybackStatusUpdate
+    );
 
+    soundRef.current = sound;
     setIsPlaying(true);
-    playerRef.current = player;
+  };
 
-    // Polling position
-    intervalRef.current = setInterval(async () => {
-      const status = await player.getStatus();
-      if (!isSeeking) {
-        setPosition(status.positionMillis);
-      }
-      setDuration(status.durationMillis);
-    }, 500);
+  const onPlaybackStatusUpdate = (status: any) => {
+    if (!status.isLoaded) return;
+
+    if (!isSeeking) {
+      setPosition(status.positionMillis);
+    }
+    setDuration(status.durationMillis || 1);
+    setIsPlaying(status.isPlaying);
   };
 
   const togglePlay = async () => {
-    const player = playerRef.current;
+    const sound = soundRef.current;
 
-    if (!player) {
+    if (!sound) {
       await loadAndPlay();
       return;
     }
 
     if (isPlaying) {
-      await player.pause();
-      setIsPlaying(false);
+      await sound.pauseAsync();
     } else {
-      await player.play();
-      setIsPlaying(true);
+      await sound.playAsync();
     }
   };
 
   const handleSeek = async (value: number) => {
-    const player = playerRef.current;
-    if (player) {
-      await player.setPosition(value);
+    const sound = soundRef.current;
+    if (sound) {
+      await sound.setPositionAsync(value);
       setPosition(value);
     }
   };
@@ -113,7 +121,7 @@ export default function PlayerScreen() {
             setIsSeeking(true);
             setPosition(val);
           }}
-          onSlidingComplete={(val) => {
+          onSlidingComplete={val => {
             setIsSeeking(false);
             handleSeek(val);
           }}
