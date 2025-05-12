@@ -7,9 +7,33 @@ const router = useRouter();
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const fetchContentRange = async () => {
-  const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/content/range?from=1609669300&to=1609669316`);
-  return res.json();
+  const contentPromises = [];
+  for (let i = 1609669300; i <= 1609669316; i++) {
+    const url = `https://services.err.ee/api/v2/radioAppContent/getContentPageData?contentId=${i}`;
+    contentPromises.push(fetch(url).then(res => res.json()).catch(() => null));
+  }
+
+  const rawResponses = await Promise.all(contentPromises);
+  return rawResponses
+    .map(res => res?.data?.mainContent)
+    .filter(Boolean)
+    .map(content => {
+      const medias = content.medias?.length ? content.medias : content.clips?.[0]?.medias;
+      if (!medias?.length) return null;
+
+      return {
+        id: content.id,
+        heading: content.heading,
+        lead: content.lead,
+        photos: content.photos,
+        audioUrl: medias[0]?.podcastUrl,
+        duration: medias[0]?.duration || 240,
+        createdTime: content.formatedTimes?.created,
+      };
+    })
+    .filter(Boolean);
 };
+
 
 export default function HomeScreen() {
   const [items, setItems] = useState([]);
