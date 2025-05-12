@@ -23,7 +23,7 @@ Kuidas peaks töötama arvutis ja telefonis
 - 1 Backend süsteem
 - 1 valik: kas frontend - veebipõhine; või mobile - mobiilirakendus
 ## Installimine
-![Backend](https://img.shields.io/badge/Backend-!Kohustuslik!-darkred?labelColor=gray&style=for-the-badge)
+![Backend](https://img.shields.io/badge/Backend-!Kohustuslik Mobiilile!-darkred?labelColor=gray&style=for-the-badge)
 1. Soovitan kasutada Kas IntelliJ IDEA-d või Visual Studio Code'i.
 2. Installeeri tähtsad sõltuvuses olevad programmid kasutades konsoolis:
 ```bash
@@ -60,7 +60,6 @@ cd ./mobile
 ```bash
 npm run android
 ```
-2. ![Tavakasutajale](https://img.shields.io/badge/Tavakasutajale-darkblue?labelColor=gray&style=for-the-badge)*Veel valmimisel*
 ## Uued Teadmised
 
 - Mobiilirakenduse arendamine
