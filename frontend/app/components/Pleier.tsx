@@ -5,7 +5,7 @@ type Episode = {
   id: number;
   title: string;
   description: string;
-  imageUrl: string;
+  imageUrl?: string;
   audioUrl: string;
   duration: number;
   createdTime?: string;
@@ -23,7 +23,6 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [episodeDuration, setEpisodeDuration] = useState<number>(episode.duration || 0);
-
   const STORAGE_KEY = `episode-progress-${episode.id}`;
 
   const togglePlay = () => {
@@ -46,7 +45,6 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Take saved position
     const savedTime = localStorage.getItem(STORAGE_KEY);
     if (savedTime) {
       audio.currentTime = parseFloat(savedTime);
@@ -69,30 +67,40 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
     audio.addEventListener('loadedmetadata', updateDuration);
     audio.addEventListener('ended', () => setIsPlaying(false));
 
-    if ('mediaSession' in navigator && episode) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: episode.title,
-        artist: 'ERR',
-        album: 'ERR Raadio',
-        artwork: [{ src: episode.imageUrl, sizes: '512x512', type: 'image/png' }],
-      });
+    try {
+      if ('mediaSession' in navigator && episode.imageUrl) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: episode.title,
+          artist: 'ERR',
+          album: 'ERR Raadio',
+          artwork: [
+            {
+              src: episode.imageUrl,
+              sizes: '512x512',
+              type: 'image/png',
+            },
+          ],
+        });
 
-      navigator.mediaSession.setActionHandler('play', () => {
-        audio.play();
-        setIsPlaying(true);
-      });
-      navigator.mediaSession.setActionHandler('pause', () => {
-        audio.pause();
-        setIsPlaying(false);
-      });
-      navigator.mediaSession.setActionHandler('seekto', (details) => {
-        if (details.fastSeek && 'fastSeek' in audio) {
-          (audio as any).fastSeek(details.seekTime);
-        } else {
-          audio.currentTime = details.seekTime ?? 0;
-        }
-        setCurrentTime(audio.currentTime);
-      });
+        navigator.mediaSession.setActionHandler('play', () => {
+          audio.play();
+          setIsPlaying(true);
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+          audio.pause();
+          setIsPlaying(false);
+        });
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+          if (details.fastSeek && 'fastSeek' in audio) {
+            (audio as any).fastSeek(details.seekTime);
+          } else {
+            audio.currentTime = details.seekTime ?? 0;
+          }
+          setCurrentTime(audio.currentTime);
+        });
+      }
+    } catch (e) {
+      console.warn('Failed to set media session metadata:', e);
     }
 
     return () => {
@@ -106,7 +114,7 @@ export const Pleier: React.FC<PleierProps> = ({ episodeList }) => {
       <Grid container spacing={2} alignItems="center" justifyContent="center" sx={{ p: 2 }}>
         <Grid item xs={12} sm={5} sx={{ textAlign: 'center' }}>
           <img
-            src={episode.imageUrl}
+            src={episode.imageUrl || '/default-artwork.png'}
             alt="Thumbnail"
             style={{ maxWidth: '100%', maxHeight: '20rem', borderRadius: 8 }}
           />
